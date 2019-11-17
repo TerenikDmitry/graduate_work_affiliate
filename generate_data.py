@@ -27,14 +27,14 @@ def generate_user_data(limit):
             password_hash=password_hash,
             active=active
         )
-        user_coupons = generate_user_coupons(10)
+        user_coupons = generate_user_coupons(1, 10)
         mongo_db_connection.insert_user(user)
 
         for user_coupon in user_coupons:
-            for _ in range(random.randint(a=10, b=100)):
-                product = products[random.randint(a=0, b=len(products)-1)]
-                order = generate_order(user, user_coupon, product)
-                mongo_db_connection.insert_order(product)
+            number_of_orders = random.randint(a=10, b=100)
+            for _ in range(number_of_orders):
+                order = generate_order(user, user_coupon, random.choice(products))
+                mongo_db_connection.insert_order(order)
 
 
 def generate_order(user, coupon, product):
@@ -51,12 +51,12 @@ def generate_order(user, coupon, product):
     )
 
 
-def generate_user_coupons(limit):
-    return [tuple([get_random_code(), get_random_percentage()]) for _ in range(limit)]
+def generate_user_coupons(min_limit, max_limit):
+    return [tuple([get_random_code(), get_random_percentage(1, 50)]) for _ in range(random.randint(a=min_limit, b=max_limit))]
 
 
 def generate_products(limit):
-    return [tuple([get_random_code(), get_random_price()]) for _ in range(limit)]
+    return [tuple([get_random_code(), get_random_price(10, 1000)]) for _ in range(limit)]
 
 
 def get_random_date():
@@ -66,7 +66,7 @@ def get_random_date():
     return start + (end - start) * random.random()
 
 
-def get_random_percentage(min_percentage=1, max_percentage=50):
+def get_random_percentage(min_percentage, max_percentage):
     return random.randint(a=min_percentage, b=max_percentage)
 
 
@@ -74,7 +74,7 @@ def get_random_code():
     return str(uuid.uuid1())
 
 
-def get_random_price(min_price=1, max_price=1000):
+def get_random_price(min_price, max_price):
     return round(random.uniform(a=min_price, b=max_price), 2)
 
 
