@@ -1,7 +1,4 @@
 from collections import namedtuple
-import random
-import uuid
-from datetime import datetime, timedelta
 import configparser
 
 config = configparser.ConfigParser()
@@ -22,22 +19,3 @@ Coupon = namedtuple("Coupon", [
     'code',
     'percentage'
 ])
-
-
-def get_random_date():
-    # 260 weeks ~ 5 years
-    end = datetime.now()
-    start = end - timedelta(weeks=260)
-    return start + (end - start) * random.random()
-
-
-def get_random_percentage():
-    return random.randint(a=1, b=50)
-
-
-def get_random_code():
-    return str(uuid.uuid1())
-
-
-def get_random_price():
-    return random.uniform(a=1, b=300)
