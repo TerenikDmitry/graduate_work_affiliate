@@ -1,18 +1,9 @@
-from collections import namedtuple
-
 from pymongo import MongoClient
 
-from models import mongo_host, mongo_port
-
-AffiliateOrder = namedtuple("AffiliateOrder", [
-    'user_id',
-    'order_code',
-    'product_code',
-    'coupon_code',
-    'coupon_percentage',
-    'date',
-    'price'
-])
+from models import (
+    mongo_host,
+    mongo_port,
+)
 
 
 class MongoDB:

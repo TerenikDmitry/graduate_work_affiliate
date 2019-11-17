@@ -2,15 +2,36 @@ import random
 import uuid
 from datetime import datetime, timedelta
 import hashlib
+from collections import namedtuple
 
 import names
 
-from models import User
-from models.mongo_db import MongoDB, AffiliateOrder
+from models.mongo_db import MongoDB
+from models.postgre_db import PostgresDB
+
+User = namedtuple("User", [
+    'user_id',
+    'email',
+    'password_hash',
+    'user_name',
+    'active'
+])
+
+AffiliateOrder = namedtuple("AffiliateOrder", [
+    'user_id',
+    'order_code',
+    'product_code',
+    'coupon_code',
+    'coupon_percentage',
+    'date',
+    'price'
+])
 
 
 def generate_user_data(limit):
     mongo_db_connection = MongoDB()
+    postgres_db_connection = PostgresDB()
+
     products = generate_products(50000)
 
     for _ in range(limit):
