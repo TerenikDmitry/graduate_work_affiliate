@@ -29,8 +29,11 @@ AffiliateOrder = namedtuple("AffiliateOrder", [
 
 
 def generate_user_data(limit):
-    mongo_db_connection = MongoDB()
-    postgres_db_connection = PostgresDB()
+    mongo_db = MongoDB()
+    postgres_db = PostgresDB()
+    postgres_db.create_user_table()
+    postgres_db.create_coupon_table()
+    postgres_db.create_order_table()
 
     products = generate_products(50000)
 
@@ -49,13 +52,13 @@ def generate_user_data(limit):
             active=active
         )
         user_coupons = generate_user_coupons(1, 10)
-        mongo_db_connection.insert_user(user)
+        mongo_db.insert_user(user)
 
         for user_coupon in user_coupons:
             number_of_orders = random.randint(a=10, b=100)
             for _ in range(number_of_orders):
                 order = generate_order(user, user_coupon, random.choice(products))
-                mongo_db_connection.insert_order(order)
+                mongo_db.insert_order(order)
 
 
 def generate_order(user, coupon, product):
