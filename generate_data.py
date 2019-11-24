@@ -51,14 +51,17 @@ def generate_user_data(limit):
             password_hash=password_hash,
             active=active
         )
-        user_coupons = generate_user_coupons(1, 10)
         mongo_db.insert_user(user)
+        user_id = postgres_db.insert_user(user)
 
+        user_coupons = generate_user_coupons(1, 10)
         for user_coupon in user_coupons:
+            coupon_id = postgres_db.insert_coupon(user_id, user_coupon)
             number_of_orders = random.randint(a=10, b=100)
             for _ in range(number_of_orders):
                 order = generate_order(user, user_coupon, random.choice(products))
                 mongo_db.insert_order(order)
+                order_id = postgres_db.insert_order(coupon_id, order)
 
 
 def generate_order(user, coupon, product):
