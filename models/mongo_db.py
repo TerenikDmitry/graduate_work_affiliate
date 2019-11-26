@@ -15,12 +15,15 @@ class MongoDB:
         self.order_collection = self.affiliate_db['orders']
 
     def insert_user(self, user):
-        result = self.user_collection.insert_one(user._asdict())
-        print('User add: {0}'.format(result.inserted_id))
+        user_data = user._asdict()
+        result = self.user_collection.insert_one(user_data)
+        return result.inserted_id
 
-    def insert_order(self, order):
+    def insert_order(self, user_id, order):
+        order_data = order._asdict()
+        order_data['user_id'] = user_id
         result = self.order_collection.insert_one(order._asdict())
-        print('Order add: {0}'.format(result.inserted_id))
+        return result.inserted_id
 
     def get_users(self, active=None):
         filters = {'active': active} if active else {}

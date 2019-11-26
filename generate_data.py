@@ -10,7 +10,6 @@ from models.mongo_db import MongoDB
 from models.postgre_db import PostgresDB
 
 User = namedtuple("User", [
-    'user_id',
     'email',
     'password_hash',
     'user_name',
@@ -18,7 +17,6 @@ User = namedtuple("User", [
 ])
 
 AffiliateOrder = namedtuple("AffiliateOrder", [
-    'user_id',
     'order_code',
     'product_code',
     'coupon_code',
@@ -38,40 +36,37 @@ def generate_user_data(limit):
     products = generate_products(50000)
 
     for _ in range(limit):
-        user_id = get_random_code()
         user_name = names.get_full_name()
         email = get_user_email(user_name)
         password_hash = hashlib.sha224(get_random_code().encode('utf-8')).hexdigest()
         active = get_random_active()
 
         user = User(
-            user_id=user_id,
             email=email,
             user_name=user_name,
             password_hash=password_hash,
             active=active
         )
-        mongo_db.insert_user(user)
-        user_id = postgres_db.insert_user(user)
+        user_id_mongo = mongo_db.insert_user(user)
+        user_id_postgres = postgres_db.insert_user(user)
 
         user_coupons = generate_user_coupons(1, 10)
         for user_coupon in user_coupons:
-            coupon_id = postgres_db.insert_coupon(user_id, user_coupon)
+            coupon_id_postgres = postgres_db.insert_coupon(user_id_postgres, user_coupon)
             number_of_orders = random.randint(a=10, b=100)
             for _ in range(number_of_orders):
-                order = generate_order(user, user_coupon, random.choice(products))
-                mongo_db.insert_order(order)
-                order_id = postgres_db.insert_order(coupon_id, order)
+                order = generate_order(user_coupon, random.choice(products))
+                order_id_mongo = mongo_db.insert_order(user_id_mongo, order)
+                order_id_postgres = postgres_db.insert_order(coupon_id_postgres, order)
 
 
-def generate_order(user, coupon, product):
+def generate_order(coupon, product):
     order_code = get_random_code()
     order_date = get_random_date()
     return AffiliateOrder(
         product_code=product[0],
         date=order_date,
         price=product[1],
-        user_id=user.user_id,
         order_code=order_code,
         coupon_percentage=coupon[1],
         coupon_code=coupon[0],
