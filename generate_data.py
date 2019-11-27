@@ -47,38 +47,37 @@ def generate_user_data(limit):
             password_hash=password_hash,
             active=active
         )
-        user_id_mongo = mongo_db.insert_user(user)
         user_id_postgres = postgres_db.insert_user(user)
 
         user_coupons = generate_user_coupons(1, 10)
+        user_orders = []
         for user_coupon in user_coupons:
             coupon_id_postgres = postgres_db.insert_coupon(user_id_postgres, user_coupon)
             number_of_orders = random.randint(a=10, b=100)
             for _ in range(number_of_orders):
-                order = generate_order(user_coupon, random.choice(products))
-                order_id_mongo = mongo_db.insert_order(user_id_mongo, order)
-                order_id_postgres = postgres_db.insert_order(coupon_id_postgres, order)
+                product = random.choice(products)
+                order = AffiliateOrder(
+                    product_code=product[0],
+                    date=get_random_date(),
+                    price=product[1],
+                    order_code=get_random_code(),
+                    coupon_percentage=user_coupon[1],
+                    coupon_code=user_coupon[0],
+                )
+                user_orders.append(order._asdict())
+                postgres_db.insert_order(coupon_id_postgres, order)
 
-
-def generate_order(coupon, product):
-    order_code = get_random_code()
-    order_date = get_random_date()
-    return AffiliateOrder(
-        product_code=product[0],
-        date=order_date,
-        price=product[1],
-        order_code=order_code,
-        coupon_percentage=coupon[1],
-        coupon_code=coupon[0],
-    )
+        mongo_db.insert_user(user, user_orders)
 
 
 def generate_user_coupons(min_limit, max_limit):
-    return [tuple([get_random_code(), get_random_percentage(1, 50)]) for _ in range(random.randint(a=min_limit, b=max_limit))]
+    return [tuple([get_random_code(), get_random_percentage(1, 50)])
+            for _ in range(random.randint(a=min_limit, b=max_limit))]
 
 
 def generate_products(limit):
-    return [tuple([get_random_code(), get_random_price(10, 1000)]) for _ in range(limit)]
+    return [tuple([get_random_code(), get_random_price(10, 1000)])
+            for _ in range(limit)]
 
 
 def get_random_date():
