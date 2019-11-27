@@ -24,6 +24,11 @@ class PostgresDB:
         cur.execute(sql)
         self.con.commit()
 
+    def select_sql(self, sql):
+        cur = self.con.cursor()
+        cur.execute(sql)
+        return cur.fetchall()
+
     def create_user_table(self):
         sql = '''
             CREATE TABLE IF NOT EXISTS "user"  
