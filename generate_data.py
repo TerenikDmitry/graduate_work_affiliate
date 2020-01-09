@@ -26,16 +26,18 @@ AffiliateOrder = namedtuple("AffiliateOrder", [
 ])
 
 
-def generate_user_data(limit):
+def generate_user_data(user_count, product_count):
     mongo_db = MongoDB()
     postgres_db = PostgresDB()
     postgres_db.create_user_table()
     postgres_db.create_coupon_table()
     postgres_db.create_order_table()
 
-    products = generate_products(50000)
+    products = generate_products(product_count)
 
-    for _ in range(limit):
+    duration_time_mongo = timedelta(0)
+    duration_time_postgres = timedelta(0)
+    for _ in range(user_count):
         user_name = names.get_full_name()
         email = get_user_email(user_name)
         password_hash = hashlib.sha224(get_random_code().encode('utf-8')).hexdigest()
@@ -47,14 +49,17 @@ def generate_user_data(limit):
             password_hash=password_hash,
             active=active
         )
-        user_id_postgres = postgres_db.insert_user(user)
+        user_id_postgres, duration_time = postgres_db.insert_user(user)
+        duration_time_postgres += duration_time
 
         user_coupons = generate_user_coupons(1, 10)
         user_orders = []
         for user_coupon in user_coupons:
-            coupon_id_postgres = postgres_db.insert_coupon(user_id_postgres, user_coupon)
-            number_of_orders = random.randint(a=10, b=100)
-            for _ in range(number_of_orders):
+            coupon_id_postgres, duration_time = postgres_db.insert_coupon(user_id_postgres, user_coupon)
+            duration_time_postgres += duration_time
+
+            orders_count = random.randint(a=10, b=100)
+            for _ in range(orders_count):
                 product = random.choice(products)
                 order = AffiliateOrder(
                     product_code=product[0],
@@ -65,14 +70,20 @@ def generate_user_data(limit):
                     coupon_code=user_coupon[0],
                 )
                 user_orders.append(order._asdict())
-                postgres_db.insert_order(coupon_id_postgres, order)
+                _, duration_time = postgres_db.insert_order(coupon_id_postgres, order)
+                duration_time_postgres += duration_time
 
-        mongo_db.insert_user(user, user_orders)
+        _, duration_time = mongo_db.insert_user(user, user_orders)
+        duration_time_mongo += duration_time
+
+    print(f"[Mongo]: {duration_time_mongo.total_seconds()}")
+    print(f"[Postgres]: {duration_time_postgres.total_seconds()}")
 
 
 def generate_user_coupons(min_limit, max_limit):
+    coupon_count = random.randint(a=min_limit, b=max_limit)
     return [tuple([get_random_code(), get_random_percentage(1, 50)])
-            for _ in range(random.randint(a=min_limit, b=max_limit))]
+            for _ in range(coupon_count)]
 
 
 def generate_products(limit):
@@ -109,4 +120,4 @@ def get_user_email(user_name):
 
 
 if __name__ == "__main__":
-    generate_user_data(5000)
+    generate_user_data(user_count=10, product_count=100)

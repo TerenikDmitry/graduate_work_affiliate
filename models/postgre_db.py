@@ -1,3 +1,5 @@
+import datetime
+
 import psycopg2
 
 from models import (
@@ -19,15 +21,26 @@ class PostgresDB:
             port=postgres_port
         )
 
-    def execute_sql(self, sql):
+    def create_sql(self, sql):
         cur = self.con.cursor()
         cur.execute(sql)
         self.con.commit()
 
+    def insert_sql(self, sql, data):
+        start_time = datetime.datetime.now()
+        cur = self.con.cursor()
+        cur.execute(sql, data)
+        inserted_id = cur.fetchone()[0]
+        self.con.commit()
+        duration_time = datetime.datetime.now() - start_time
+        return inserted_id, duration_time
+
     def select_sql(self, sql):
+        start_time = datetime.datetime.now()
         cur = self.con.cursor()
         cur.execute(sql)
-        return cur.fetchall()
+        duration_time = datetime.datetime.now() - start_time
+        return cur.fetchall(), duration_time
 
     def create_user_table(self):
         sql = '''
@@ -39,7 +52,7 @@ class PostgresDB:
             active boolean default true);
         '''
 
-        self.execute_sql(sql)
+        self.create_sql(sql)
 
     def create_coupon_table(self):
         sql = '''
@@ -50,7 +63,7 @@ class PostgresDB:
             percentage smallint);
         '''
 
-        self.execute_sql(sql)
+        self.create_sql(sql)
 
     def create_order_table(self):
         sql = '''
@@ -63,7 +76,7 @@ class PostgresDB:
             created timestamp);
         '''
 
-        self.execute_sql(sql)
+        self.create_sql(sql)
 
     def insert_user(self, user):
         sql = """
@@ -75,12 +88,7 @@ class PostgresDB:
         """
         user_data = (user.email, user.password_hash, user.user_name, user.active)
 
-        cur = self.con.cursor()
-        cur.execute(sql, user_data)
-        inserted_id = cur.fetchone()[0]
-        self.con.commit()
-
-        return inserted_id
+        return self.insert_sql(sql, user_data)
 
     def insert_coupon(self, user_id, user_coupon):
         sql = """
@@ -92,12 +100,7 @@ class PostgresDB:
         """
         coupon_data = (user_id, user_coupon[0], user_coupon[1])
 
-        cur = self.con.cursor()
-        cur.execute(sql, coupon_data)
-        inserted_id = cur.fetchone()[0]
-        self.con.commit()
-
-        return inserted_id
+        return self.insert_sql(sql, coupon_data)
 
     def insert_order(self, coupon_id, order):
         sql = """
@@ -109,9 +112,16 @@ class PostgresDB:
         """
         order_data = (coupon_id, order.order_code, order.product_code, order.price, order.date)
 
-        cur = self.con.cursor()
-        cur.execute(sql, order_data)
-        inserted_id = cur.fetchone()[0]
-        self.con.commit()
+        return self.insert_sql(sql, order_data)
 
-        return inserted_id
+    def top_bestsellers(self, top_limit):
+        sql = f'''
+            SELECT u.user_name, sum("order".price)
+            FROM "order"
+                LEFT OUTER JOIN coupon c on "order".coupon_id = c.id
+                LEFT JOIN "user" u on c.user_id = u.id
+            GROUP BY u.id
+            ORDER BY sum("order".price) DESC
+            LIMIT {top_limit};
+        '''
+        return self.select_sql(sql)
