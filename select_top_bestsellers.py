@@ -1,3 +1,5 @@
+import argparse
+
 from models.mongo_db import MongoDB
 from models.postgre_db import PostgresDB
 
@@ -5,7 +7,14 @@ mongo_db = MongoDB()
 postgres_db = PostgresDB()
 
 
-def user_top_bestsellers(top_limit):
+def top_bestsellers():
+    parser = argparse.ArgumentParser()
+    parser.add_argument("top_limit",
+                        help="Record limit",
+                        type=int)
+    args = parser.parse_args()
+    top_limit = args.top_limit
+
     users, duration_time = mongo_db.top_bestsellers(top_limit)
     print(f"[Mongo] top bestsellers: {duration_time.total_seconds()}")
     for user in users:
@@ -20,4 +29,4 @@ def user_top_bestsellers(top_limit):
 
 
 if __name__ == "__main__":
-    user_top_bestsellers(top_limit=10)
+    top_bestsellers()

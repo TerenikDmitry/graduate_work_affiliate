@@ -125,3 +125,12 @@ class PostgresDB:
             LIMIT {top_limit};
         '''
         return self.select_sql(sql)
+
+    def orders_by_coupon(self, coupon_code):
+        sql = f'''
+            SELECT "order".code, "order".price
+            FROM "order"
+                LEFT OUTER JOIN coupon c on "order".coupon_id = c.id
+            WHERE c.code = '{coupon_code}';
+        '''
+        return self.select_sql(sql)

@@ -46,3 +46,25 @@ class MongoDB:
         duration_time = datetime.datetime.now() - start_time
 
         return list(result), duration_time
+
+    def orders_by_coupon(self, coupon_code):
+        pipeline = [
+            {
+                "$unwind": "$orders"
+            },
+            {
+                "$match": {"orders.coupon_code": coupon_code}
+            },
+            {
+                "$project": {
+                    "order_code": "$orders.order_code",
+                    "price": "$orders.price",
+                }
+            },
+        ]
+
+        start_time = datetime.datetime.now()
+        result = self.user_collection.aggregate(pipeline)
+        duration_time = datetime.datetime.now() - start_time
+
+        return list(result), duration_time
