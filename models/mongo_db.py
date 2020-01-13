@@ -30,11 +30,11 @@ class MongoDB:
             {
                 "$project": {
                     "user_name": "$user_name",
-                    "orderTotal": { "$sum": "$orders.price"},
+                    "orderTotal": {"$sum": "$orders.price"},
                 }
             },
             {
-                "$sort": { "orderTotal": -1 }
+                "$sort": {"orderTotal": -1}
             },
             {
                 "$limit": top_limit
@@ -68,3 +68,30 @@ class MongoDB:
         duration_time = datetime.datetime.now() - start_time
 
         return list(result), duration_time
+
+    def user_coupons(self, user_email):
+        pipeline = [
+            {
+                "$unwind": "$orders"
+            },
+            {
+                "$match": {"email": user_email}
+            },
+            {
+                "$group": {
+                    "_id": {
+                        "coupon_code": "$orders.coupon_code",
+                        "coupon_percentage": "$orders.coupon_percentage"
+                    }
+                }
+            },
+            {
+                "$sort": {"_id.coupon_percentage": -1}
+            },
+        ]
+
+        start_time = datetime.datetime.now()
+        result = self.user_collection.aggregate(pipeline)
+        duration_time = datetime.datetime.now() - start_time
+
+        return result, duration_time

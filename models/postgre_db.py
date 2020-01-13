@@ -130,7 +130,17 @@ class PostgresDB:
         sql = f'''
             SELECT "order".code, "order".price
             FROM "order"
-                LEFT OUTER JOIN coupon c on "order".coupon_id = c.id
+                LEFT OUTER JOIN "coupon" c on "order".coupon_id = c.id
             WHERE c.code = '{coupon_code}';
+        '''
+        return self.select_sql(sql)
+
+    def user_coupons(self, user_email):
+        sql = f'''
+            SELECT "coupon".code, "coupon".percentage
+            FROM "coupon"
+                LEFT OUTER JOIN "user" u on "coupon".user_id = u.id
+            WHERE u.email = '{user_email}'
+            ORDER BY "coupon".percentage DESC;
         '''
         return self.select_sql(sql)
