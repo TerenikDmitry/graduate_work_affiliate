@@ -98,3 +98,6 @@ class MongoDB:
 
     def set_order_price(self, order_code, price):
         pass
+
+    def delete_orders_by_coupon(self, coupon_code):
+        pass

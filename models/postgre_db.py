@@ -155,3 +155,11 @@ class PostgresDB:
             WHERE "order".code = '{order_code}';
         '''
         return self.execute_sql(sql)
+
+    def delete_orders_by_coupon(self, coupon_code):
+        sql = f'''
+            DELETE "order"
+                LEFT OUTER JOIN "coupon" c on "order".coupon_id = c.id
+            WHERE c.code = '{coupon_code}';
+        '''
+        return self.execute_sql(sql)
