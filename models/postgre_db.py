@@ -21,24 +21,33 @@ class PostgresDB:
             port=postgres_port
         )
 
-    def create_sql(self, sql):
+    def execute_sql(self, sql):
+        start_time = datetime.datetime.now()
+
         cur = self.con.cursor()
         cur.execute(sql)
         self.con.commit()
 
+        duration_time = datetime.datetime.now() - start_time
+        return duration_time
+
     def insert_sql(self, sql, data):
         start_time = datetime.datetime.now()
+
         cur = self.con.cursor()
         cur.execute(sql, data)
         inserted_id = cur.fetchone()[0]
         self.con.commit()
+
         duration_time = datetime.datetime.now() - start_time
         return inserted_id, duration_time
 
     def select_sql(self, sql):
         start_time = datetime.datetime.now()
+
         cur = self.con.cursor()
         cur.execute(sql)
+
         duration_time = datetime.datetime.now() - start_time
         return cur.fetchall(), duration_time
 
@@ -51,8 +60,7 @@ class PostgresDB:
             user_name varchar(256),
             active boolean default true);
         '''
-
-        self.create_sql(sql)
+        self.execute_sql(sql)
 
     def create_coupon_table(self):
         sql = '''
@@ -62,8 +70,7 @@ class PostgresDB:
             code varchar(256) unique,
             percentage smallint);
         '''
-
-        self.create_sql(sql)
+        self.execute_sql(sql)
 
     def create_order_table(self):
         sql = '''
@@ -75,8 +82,7 @@ class PostgresDB:
             price numeric,
             created timestamp);
         '''
-
-        self.create_sql(sql)
+        self.execute_sql(sql)
 
     def insert_user(self, user):
         sql = """
@@ -87,7 +93,6 @@ class PostgresDB:
             RETURNING "user".id;
         """
         user_data = (user.email, user.password_hash, user.user_name, user.active)
-
         return self.insert_sql(sql, user_data)
 
     def insert_coupon(self, user_id, user_coupon):
@@ -99,7 +104,6 @@ class PostgresDB:
             RETURNING "coupon".id;
         """
         coupon_data = (user_id, user_coupon[0], user_coupon[1])
-
         return self.insert_sql(sql, coupon_data)
 
     def insert_order(self, coupon_id, order):
@@ -111,7 +115,6 @@ class PostgresDB:
             RETURNING "order".id;
         """
         order_data = (coupon_id, order.order_code, order.product_code, order.price, order.date)
-
         return self.insert_sql(sql, order_data)
 
     def top_bestsellers(self, top_limit):
@@ -144,3 +147,11 @@ class PostgresDB:
             ORDER BY "coupon".percentage DESC;
         '''
         return self.select_sql(sql)
+
+    def set_order_price(self, order_code, price):
+        sql = f'''
+            UPDATE "order"
+            SET "order".price = {price}
+            WHERE "order".code = '{order_code}';
+        '''
+        return self.execute_sql(sql)

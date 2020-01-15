@@ -95,3 +95,6 @@ class MongoDB:
         duration_time = datetime.datetime.now() - start_time
 
         return result, duration_time
+
+    def set_order_price(self, order_code, price):
+        pass
