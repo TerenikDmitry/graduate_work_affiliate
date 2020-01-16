@@ -99,5 +99,8 @@ class MongoDB:
     def set_order_price(self, order_code, price):
         pass
 
+    def set_coupon_percentage(self, coupon_code, percentage):
+        pass
+
     def delete_orders_by_coupon(self, coupon_code):
         pass

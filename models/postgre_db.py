@@ -156,6 +156,14 @@ class PostgresDB:
         '''
         return self.execute_sql(sql)
 
+    def set_coupon_percentage(self, coupon_code, percentage):
+        sql = f'''
+            UPDATE "coupon"
+            SET "coupon".percentage = {percentage}
+            WHERE "coupon".code = '{coupon_code}';
+        '''
+        return self.execute_sql(sql)
+
     def delete_orders_by_coupon(self, coupon_code):
         sql = f'''
             DELETE "order"

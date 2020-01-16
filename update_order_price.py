@@ -22,9 +22,9 @@ postgres_db = PostgresDB()
 def set_order_price():
     parser = argparse.ArgumentParser()
     parser.add_argument("order_code",
-                        help="Product code")
+                        help="Order code")
     parser.add_argument("price",
-                        help="Price",
+                        help="Order price",
                         type=float)
     args = parser.parse_args()
     order_code = args.order_code
