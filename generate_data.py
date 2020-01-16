@@ -1,3 +1,5 @@
+import argparse
+import logging
 import random
 import uuid
 from datetime import datetime, timedelta
@@ -8,6 +10,19 @@ import names
 
 from models.mongo_db import MongoDB
 from models.postgre_db import PostgresDB
+
+
+logger = logging.getLogger('generate_user_data')
+logger.setLevel(logging.INFO)
+
+formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+
+ch = logging.FileHandler(filename='logs/generate.log')
+ch.setLevel(logging.INFO)
+ch.setFormatter(formatter)
+
+logger.addHandler(ch)
+
 
 User = namedtuple("User", [
     'email',
@@ -26,7 +41,20 @@ AffiliateOrder = namedtuple("AffiliateOrder", [
 ])
 
 
-def generate_user_data(user_count, product_count):
+def generate_user_data():
+    parser = argparse.ArgumentParser()
+    parser.add_argument("user_count",
+                        help="User count",
+                        type=int)
+    parser.add_argument("product_count",
+                        help="Product count",
+                        type=int)
+    args = parser.parse_args()
+    user_count = args.user_count
+    product_count = args.product_count
+
+    logger.info(f'START with args: user_count={user_count}, product_count={product_count}')
+
     mongo_db = MongoDB()
     postgres_db = PostgresDB()
     postgres_db.create_user_table()
@@ -76,8 +104,8 @@ def generate_user_data(user_count, product_count):
         _, duration_time = mongo_db.insert_user(user, user_orders)
         duration_time_mongo += duration_time
 
-    print(f"[Mongo]: {duration_time_mongo.total_seconds()}")
-    print(f"[Postgres]: {duration_time_postgres.total_seconds()}")
+    logging.info(f"[Mongo]: {duration_time_mongo.total_seconds()}")
+    logging.info(f"[Postgres]: {duration_time_postgres.total_seconds()}")
 
 
 def generate_user_coupons(min_limit, max_limit):
@@ -120,4 +148,4 @@ def get_user_email(user_name):
 
 
 if __name__ == "__main__":
-    generate_user_data(user_count=10, product_count=100)
+    generate_user_data()
