@@ -55,10 +55,10 @@ class PostgresDB:
         sql = '''
             CREATE TABLE IF NOT EXISTS "user"  
             (id SERIAL PRIMARY KEY,
-            email varchar(256) unique,
-            password_hash varchar(256),
-            user_name varchar(256),
-            active boolean default true);
+            email VARCHAR(256) UNIQUE,
+            password_hash VARCHAR(256),
+            user_name VARCHAR(256),
+            active boolean DEFAULT TRUE);
         '''
         self.execute_sql(sql)
 
@@ -66,9 +66,9 @@ class PostgresDB:
         sql = '''
             CREATE TABLE IF NOT EXISTS "coupon"  
             (id SERIAL PRIMARY KEY,
-            user_id integer REFERENCES "user" (id),
-            code varchar(256) unique,
-            percentage smallint);
+            user_id INTEGER REFERENCES "user" (id) ON DELETE CASCADE,
+            code VARCHAR(256) UNIQUE,
+            percentage SMALLINT);
         '''
         self.execute_sql(sql)
 
@@ -76,11 +76,11 @@ class PostgresDB:
         sql = '''
             CREATE TABLE IF NOT EXISTS "order"  
             (id SERIAL PRIMARY KEY,
-            coupon_id integer REFERENCES "coupon" (id),
-            code varchar(256) unique,
-            product_code varchar(256),
-            price numeric,
-            created timestamp);
+            coupon_id INTEGER REFERENCES "coupon" (id) ON DELETE CASCADE,
+            code VARCHAR(256) UNIQUE,
+            product_code VARCHAR(256),
+            price NUMERIC,
+            created TIMESTAMP);
         '''
         self.execute_sql(sql)
 
@@ -121,8 +121,8 @@ class PostgresDB:
         sql = f'''
             SELECT u.user_name, sum("order".price)
             FROM "order"
-                LEFT OUTER JOIN coupon c on "order".coupon_id = c.id
-                LEFT JOIN "user" u on c.user_id = u.id
+                LEFT OUTER JOIN coupon c ON "order".coupon_id=c.id
+                LEFT JOIN "user" u ON c.user_id=u.id
             GROUP BY u.id
             ORDER BY sum("order".price) DESC
             LIMIT {top_limit};
@@ -133,7 +133,7 @@ class PostgresDB:
         sql = f'''
             SELECT "order".code, "order".price
             FROM "order"
-                LEFT OUTER JOIN "coupon" c on "order".coupon_id = c.id
+                LEFT OUTER JOIN "coupon" c ON "order".coupon_id=c.id
             WHERE c.code = '{coupon_code}';
         '''
         return self.select_sql(sql)
@@ -142,7 +142,7 @@ class PostgresDB:
         sql = f'''
             SELECT "coupon".code, "coupon".percentage
             FROM "coupon"
-                LEFT OUTER JOIN "user" u on "coupon".user_id = u.id
+                LEFT OUTER JOIN "user" u ON "coupon".user_id=u.id
             WHERE u.email = '{user_email}'
             ORDER BY "coupon".percentage DESC;
         '''
@@ -151,23 +151,25 @@ class PostgresDB:
     def set_order_price(self, order_code, price):
         sql = f'''
             UPDATE "order"
-            SET "order".price = {price}
-            WHERE "order".code = '{order_code}';
+            SET price = {price}
+            WHERE code = '{order_code}';
         '''
         return self.execute_sql(sql)
 
     def set_coupon_percentage(self, coupon_code, percentage):
         sql = f'''
             UPDATE "coupon"
-            SET "coupon".percentage = {percentage}
-            WHERE "coupon".code = '{coupon_code}';
+            SET percentage = {percentage}
+            WHERE code = '{coupon_code}';
         '''
         return self.execute_sql(sql)
 
     def delete_orders_by_coupon(self, coupon_code):
         sql = f'''
-            DELETE "order"
-                LEFT OUTER JOIN "coupon" c on "order".coupon_id = c.id
-            WHERE c.code = '{coupon_code}';
+            DELETE 
+            FROM "order" o  
+                 USING "coupon" c 
+            WHERE o.coupon_id=c.id AND
+                 c.code = '{coupon_code}';
         '''
         return self.execute_sql(sql)
