@@ -97,10 +97,39 @@ class MongoDB:
         return result, duration_time
 
     def set_order_price(self, order_code, price):
-        pass
+        start_time = datetime.datetime.now()
+        result = self.user_collection.update_many(
+            {},
+            {
+                "$set": {"orders.$[elem].price": price}
+            },
+            array_filters=[{"elem.order_code": order_code}]
+        )
+        duration_time = datetime.datetime.now() - start_time
+
+        return duration_time
 
     def set_coupon_percentage(self, coupon_code, percentage):
-        pass
+        start_time = datetime.datetime.now()
+        result = self.user_collection.update_many(
+            {},
+            {
+                "$set": {"orders.$[elem].coupon_percentage": percentage}
+            },
+            array_filters=[{"elem.coupon_code": coupon_code}]
+        )
+        duration_time = datetime.datetime.now() - start_time
+
+        return duration_time
 
     def delete_orders_by_coupon(self, coupon_code):
-        pass
+        start_time = datetime.datetime.now()
+        result = self.user_collection.update_many(
+            {},
+            {
+                "$pull": {"orders": {"coupon_code": coupon_code}}
+            },
+        )
+        duration_time = datetime.datetime.now() - start_time
+
+        return duration_time
