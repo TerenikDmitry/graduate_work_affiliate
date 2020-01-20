@@ -133,3 +133,14 @@ class MongoDB:
         duration_time = datetime.datetime.now() - start_time
 
         return duration_time
+
+    def delete_user_by_email(self, user_email):
+        start_time=datetime.datetime.now()
+        result = self.user_collection.delete_one(
+            {
+                "email": user_email
+            },
+        )
+        duration_time = datetime.datetime.now() - start_time
+
+        return duration_time

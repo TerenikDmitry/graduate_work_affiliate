@@ -173,3 +173,11 @@ class PostgresDB:
                  c.code = '{coupon_code}';
         '''
         return self.execute_sql(sql)
+
+    def delete_user_by_email(self, user_email):
+        sql = f'''
+            DELETE 
+            FROM "user"
+            WHERE email = '{user_email}';
+        '''
+        return self.execute_sql(sql)
