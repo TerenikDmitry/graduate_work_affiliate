@@ -31,12 +31,12 @@ def orders_by_coupon():
     orders, duration_time = mongo_db.orders_by_coupon(coupon_code)
     logger.info(f"[Mongo] orders by coupon: {duration_time.total_seconds()}")
     for order in orders:
-        logging.info(f"order: {order}")
+        logger.info(f"order: {order}")
 
     orders, duration_time = postgres_db.orders_by_coupon(coupon_code)
     logger.info(f"[Postgres] orders by coupon: {duration_time.total_seconds()}")
     for order in orders:
-        logging.info(f"order: {order}")
+        logger.info(f"order: {order}")
 
 
 if __name__ == "__main__":

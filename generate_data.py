@@ -104,8 +104,8 @@ def generate_user_data():
         _, duration_time = mongo_db.insert_user(user, user_orders)
         duration_time_mongo += duration_time
 
-    logging.info(f"[Mongo]: {duration_time_mongo.total_seconds()}")
-    logging.info(f"[Postgres]: {duration_time_postgres.total_seconds()}")
+    logger.info(f"[Mongo]: {duration_time_mongo.total_seconds()}")
+    logger.info(f"[Postgres]: {duration_time_postgres.total_seconds()}")
 
 
 def generate_user_coupons(min_limit, max_limit):

@@ -33,10 +33,10 @@ def set_order_price():
     logger.info(f'START with args: order_code={order_code}, price={price}')
 
     duration_time = mongo_db.set_order_price(order_code, price)
-    logging.info(f"[Mongo] set order price: {duration_time.total_seconds()}")
+    logger.info(f"[Mongo] set order price: {duration_time.total_seconds()}")
 
     duration_time = postgres_db.set_order_price(order_code, price)
-    logging.info(f"[Postgres] set order price: {duration_time.total_seconds()}")
+    logger.info(f"[Postgres] set order price: {duration_time.total_seconds()}")
 
 
 if __name__ == "__main__":

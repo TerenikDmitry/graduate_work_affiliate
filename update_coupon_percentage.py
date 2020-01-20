@@ -33,10 +33,10 @@ def set_coupon_percentage():
     logger.info(f'START with args: coupon_code={coupon_code}, percentage={percentage}')
 
     duration_time = mongo_db.set_coupon_percentage(coupon_code, percentage)
-    logging.info(f"[Mongo] set coupon percentage: {duration_time.total_seconds()}")
+    logger.info(f"[Mongo] set coupon percentage: {duration_time.total_seconds()}")
 
     duration_time = postgres_db.set_coupon_percentage(coupon_code, percentage)
-    logging.info(f"[Postgres] set coupon percentage: {duration_time.total_seconds()}")
+    logger.info(f"[Postgres] set coupon percentage: {duration_time.total_seconds()}")
 
 
 if __name__ == "__main__":

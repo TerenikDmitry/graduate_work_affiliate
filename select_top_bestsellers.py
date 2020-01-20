@@ -30,14 +30,14 @@ def top_bestsellers():
     logger.info(f'START with args: top_limit={top_limit}')
 
     users, duration_time = mongo_db.top_bestsellers(top_limit)
-    logging.info(f"[Mongo] top bestsellers: {duration_time.total_seconds()}")
+    logger.info(f"[Mongo] top bestsellers: {duration_time.total_seconds()}")
     for user in users:
-        logging.info(f"user: {user}")
+        logger.info(f"user: {user}")
 
     users, duration_time = postgres_db.top_bestsellers(top_limit)
-    logging.info(f"[Postgres] top bestsellers: {duration_time.total_seconds()}")
+    logger.info(f"[Postgres] top bestsellers: {duration_time.total_seconds()}")
     for user in users:
-        logging.info(f"user: {user}")
+        logger.info(f"user: {user}")
 
 
 if __name__ == "__main__":

@@ -29,14 +29,14 @@ def user_coupons():
     logger.info(f'START with args: user_email={user_email}')
 
     coupons, duration_time = mongo_db.user_coupons(user_email)
-    logging.info(f"[Mongo] user coupons: {duration_time.total_seconds()}")
+    logger.info(f"[Mongo] user coupons: {duration_time.total_seconds()}")
     for coupon in coupons:
-        logging.info(f"coupon: {coupon}")
+        logger.info(f"coupon: {coupon}")
 
     coupons, duration_time = postgres_db.user_coupons(user_email)
-    logging.info(f"[Postgres] user coupons: {duration_time.total_seconds()}")
+    logger.info(f"[Postgres] user coupons: {duration_time.total_seconds()}")
     for coupon in coupons:
-        logging.info(f"coupon: {coupon}")
+        logger.info(f"coupon: {coupon}")
 
 
 if __name__ == "__main__":
