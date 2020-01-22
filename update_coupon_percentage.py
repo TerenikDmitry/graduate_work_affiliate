@@ -4,7 +4,7 @@ import logging
 from models.mongo_db import MongoDB
 from models.postgre_db import PostgresDB
 
-logger = logging.getLogger('set_coupon_percentage')
+logger = logging.getLogger('update_coupon_percentage')
 logger.setLevel(logging.INFO)
 
 formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')

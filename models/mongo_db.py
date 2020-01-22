@@ -141,7 +141,7 @@ class MongoDB:
         result = self.user_collection.update_many(
             {},
             {
-                "$pull": {"orders": {"code": order_code}}
+                "$pull": {"orders": {"order_code": order_code}}
             },
         )
         duration_time = datetime.datetime.now() - start_time

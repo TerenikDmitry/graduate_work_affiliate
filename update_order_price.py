@@ -4,7 +4,7 @@ import logging
 from models.mongo_db import MongoDB
 from models.postgre_db import PostgresDB
 
-logger = logging.getLogger('set_order_price')
+logger = logging.getLogger('update_order_price')
 logger.setLevel(logging.INFO)
 
 formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
