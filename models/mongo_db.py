@@ -122,12 +122,12 @@ class MongoDB:
 
         return duration_time
 
-    def delete_orders_by_coupon(self, coupon_code):
+    def delete_order_by_code(self, order_code):
         start_time = datetime.datetime.now()
         result = self.user_collection.update_many(
             {},
             {
-                "$pull": {"orders": {"coupon_code": coupon_code}}
+                "$pull": {"orders": {"code": order_code}}
             },
         )
         duration_time = datetime.datetime.now() - start_time
@@ -139,6 +139,18 @@ class MongoDB:
         result = self.user_collection.delete_one(
             {
                 "email": user_email
+            },
+        )
+        duration_time = datetime.datetime.now() - start_time
+
+        return duration_time
+
+    def delete_coupon_by_code(self, coupon_code):
+        start_time = datetime.datetime.now()
+        result = self.user_collection.update_many(
+            {},
+            {
+                "$pull": {"orders": {"coupon_code": coupon_code}}
             },
         )
         duration_time = datetime.datetime.now() - start_time

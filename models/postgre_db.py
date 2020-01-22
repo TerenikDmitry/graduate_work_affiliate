@@ -164,13 +164,11 @@ class PostgresDB:
         '''
         return self.execute_sql(sql)
 
-    def delete_orders_by_coupon(self, coupon_code):
+    def delete_order_by_code(self, order_code):
         sql = f'''
             DELETE 
-            FROM "order" o  
-                 USING "coupon" c 
-            WHERE o.coupon_id=c.id AND
-                 c.code = '{coupon_code}';
+            FROM "order"
+            WHERE code = '{order_code}';
         '''
         return self.execute_sql(sql)
 
@@ -179,5 +177,13 @@ class PostgresDB:
             DELETE 
             FROM "user"
             WHERE email = '{user_email}';
+        '''
+        return self.execute_sql(sql)
+
+    def delete_coupon_by_code(self, coupon_code):
+        sql = f'''
+            DELETE 
+            FROM "coupon"
+            WHERE code = '{coupon_code}';
         '''
         return self.execute_sql(sql)
