@@ -122,6 +122,20 @@ class MongoDB:
 
         return duration_time
 
+    def set_user_active(self, user_email, active):
+        start_time = datetime.datetime.now()
+        result = self.user_collection.update_one(
+            {
+                "email": user_email
+            },
+            {
+                "$set": {"active": active}
+            },
+        )
+        duration_time = datetime.datetime.now() - start_time
+
+        return duration_time
+
     def delete_order_by_code(self, order_code):
         start_time = datetime.datetime.now()
         result = self.user_collection.update_many(

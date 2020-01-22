@@ -164,6 +164,14 @@ class PostgresDB:
         '''
         return self.execute_sql(sql)
 
+    def set_user_active(self, user_email, active):
+        sql = f'''
+            UPDATE "user"
+            SET active = {active}
+            WHERE email = '{user_email}';
+        '''
+        return self.execute_sql(sql)
+
     def delete_order_by_code(self, order_code):
         sql = f'''
             DELETE 
