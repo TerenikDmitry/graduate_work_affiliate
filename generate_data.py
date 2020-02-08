@@ -1,5 +1,4 @@
 import argparse
-import logging
 import random
 import uuid
 from datetime import datetime, timedelta
@@ -10,19 +9,9 @@ import names
 
 from models.mongo_db import MongoDB
 from models.postgre_db import PostgresDB
+from base import get_info_logger
 
-
-logger = logging.getLogger('generate_user_data')
-logger.setLevel(logging.INFO)
-
-formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
-
-ch = logging.FileHandler(filename='logs/generate.log')
-ch.setLevel(logging.INFO)
-ch.setFormatter(formatter)
-
-logger.addHandler(ch)
-
+logger = get_info_logger('generate_user_data', 'insert')
 
 User = namedtuple("User", [
     'email',

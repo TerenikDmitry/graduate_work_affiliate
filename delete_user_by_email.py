@@ -1,19 +1,10 @@
 import argparse
-import logging
 
 from models.mongo_db import MongoDB
 from models.postgre_db import PostgresDB
+from base import get_info_logger
 
-logger = logging.getLogger('delete_user_by_email')
-logger.setLevel(logging.INFO)
-
-formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
-
-ch = logging.FileHandler(filename='logs/delete.log')
-ch.setLevel(logging.INFO)
-ch.setFormatter(formatter)
-
-logger.addHandler(ch)
+logger = get_info_logger('delete_user_by_email', 'delete')
 
 mongo_db = MongoDB()
 postgres_db = PostgresDB()

@@ -1,19 +1,10 @@
 import argparse
-import logging
 
 from models.mongo_db import MongoDB
 from models.postgre_db import PostgresDB
+from base import get_info_logger
 
-logger = logging.getLogger('update_coupon_percentage')
-logger.setLevel(logging.INFO)
-
-formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
-
-ch = logging.FileHandler(filename='logs/update.log')
-ch.setLevel(logging.INFO)
-ch.setFormatter(formatter)
-
-logger.addHandler(ch)
+logger = get_info_logger('update_coupon_percentage', 'update')
 
 mongo_db = MongoDB()
 postgres_db = PostgresDB()
