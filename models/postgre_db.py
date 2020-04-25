@@ -53,34 +53,37 @@ class PostgresDB:
 
     def create_user_table(self):
         sql = '''
-            CREATE TABLE IF NOT EXISTS "user"  
-            (id SERIAL PRIMARY KEY,
+            CREATE TABLE IF NOT EXISTS "user" (
+            id SERIAL PRIMARY KEY,
             email VARCHAR(256) UNIQUE,
             password_hash VARCHAR(256),
             user_name VARCHAR(256),
-            active boolean DEFAULT TRUE);
+            active BOOLEAN DEFAULT TRUE
+            );
         '''
         self.execute_sql(sql)
 
     def create_coupon_table(self):
         sql = '''
-            CREATE TABLE IF NOT EXISTS "coupon"  
-            (id SERIAL PRIMARY KEY,
+            CREATE TABLE IF NOT EXISTS "coupon" (
+            id SERIAL PRIMARY KEY,
             user_id INTEGER REFERENCES "user" (id) ON DELETE CASCADE,
             code VARCHAR(256) UNIQUE,
-            percentage SMALLINT);
+            percentage SMALLINT
+            );
         '''
         self.execute_sql(sql)
 
     def create_order_table(self):
         sql = '''
-            CREATE TABLE IF NOT EXISTS "order"  
-            (id SERIAL PRIMARY KEY,
+            CREATE TABLE IF NOT EXISTS "order" (
+            id SERIAL PRIMARY KEY,
             coupon_id INTEGER REFERENCES "coupon" (id) ON DELETE CASCADE,
             code VARCHAR(256) UNIQUE,
             product_code VARCHAR(256),
             price NUMERIC,
-            created TIMESTAMP);
+            created TIMESTAMP
+            );
         '''
         self.execute_sql(sql)
 

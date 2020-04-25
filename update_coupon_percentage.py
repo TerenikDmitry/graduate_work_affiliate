@@ -12,11 +12,8 @@ postgres_db = PostgresDB()
 
 def set_coupon_percentage():
     parser = argparse.ArgumentParser()
-    parser.add_argument("coupon_code",
-                        help="Coupon code")
-    parser.add_argument("percentage",
-                        help="Coupon percentage",
-                        type=float)
+    parser.add_argument("coupon_code", help="Coupon code")
+    parser.add_argument("percentage", type=float, help="Coupon percentage",)
     args = parser.parse_args()
     coupon_code = args.coupon_code
     percentage = args.percentage

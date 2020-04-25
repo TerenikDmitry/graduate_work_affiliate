@@ -12,8 +12,7 @@ postgres_db = PostgresDB()
 
 def delete_order_by_code():
     parser = argparse.ArgumentParser()
-    parser.add_argument("order_code",
-                        help="Order code")
+    parser.add_argument("order_code", help="Order code")
     args = parser.parse_args()
     order_code = args.order_code
 

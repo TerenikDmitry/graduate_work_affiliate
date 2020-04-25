@@ -12,11 +12,8 @@ postgres_db = PostgresDB()
 
 def set_user_active():
     parser = argparse.ArgumentParser()
-    parser.add_argument("user_email",
-                        help="User email")
-    parser.add_argument("active",
-                        help="Active flag",
-                        type=bool)
+    parser.add_argument("user_email", help="User email")
+    parser.add_argument("active", type=bool, help="Active flag")
     args = parser.parse_args()
     user_email = args.user_email
     active = args.active

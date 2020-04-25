@@ -12,9 +12,7 @@ postgres_db = PostgresDB()
 
 def top_bestsellers():
     parser = argparse.ArgumentParser()
-    parser.add_argument("top_limit",
-                        help="Record limit",
-                        type=int)
+    parser.add_argument("top_limit", type=int, help="Record limit")
     args = parser.parse_args()
     top_limit = args.top_limit
 

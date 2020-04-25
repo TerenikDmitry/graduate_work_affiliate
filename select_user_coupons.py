@@ -12,8 +12,7 @@ postgres_db = PostgresDB()
 
 def user_coupons():
     parser = argparse.ArgumentParser()
-    parser.add_argument("user_email",
-                        help="User email")
+    parser.add_argument("user_email", help="User email")
     args = parser.parse_args()
     user_email = args.user_email
 

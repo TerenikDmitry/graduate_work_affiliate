@@ -32,12 +32,8 @@ AffiliateOrder = namedtuple("AffiliateOrder", [
 
 def generate_user_data():
     parser = argparse.ArgumentParser()
-    parser.add_argument("user_count",
-                        help="User count",
-                        type=int)
-    parser.add_argument("product_count",
-                        help="Product count",
-                        type=int)
+    parser.add_argument("user_count", type=int, help="User count")
+    parser.add_argument("product_count", type=int, help="Product count")
     args = parser.parse_args()
     user_count = args.user_count
     product_count = args.product_count
@@ -99,12 +95,12 @@ def generate_user_data():
 
 def generate_user_coupons(min_limit, max_limit):
     coupon_count = random.randint(a=min_limit, b=max_limit)
-    return [tuple([get_random_code(), get_random_percentage(1, 50)])
+    return [(get_random_code(), get_random_percentage(1, 50))
             for _ in range(coupon_count)]
 
 
 def generate_products(limit):
-    return [tuple([get_random_code(), get_random_price(10, 1000)])
+    return [(get_random_code(), get_random_price(10, 1000))
             for _ in range(limit)]
 
 

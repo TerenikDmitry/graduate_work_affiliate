@@ -12,8 +12,7 @@ postgres_db = PostgresDB()
 
 def delete_coupon_by_code():
     parser = argparse.ArgumentParser()
-    parser.add_argument("coupon_code",
-                        help="Coupon code")
+    parser.add_argument("coupon_code", help="Coupon code")
     args = parser.parse_args()
     coupon_code = args.coupon_code
 
