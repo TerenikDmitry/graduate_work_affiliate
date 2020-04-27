@@ -1,7 +1,7 @@
 import argparse
 
 from models.mongo_db import MongoDB
-from models.postgre_db import PostgresDB
+from models.postgres_db import PostgresDB
 from base import get_info_logger
 
 logger = get_info_logger('top_bestsellers', 'select')
